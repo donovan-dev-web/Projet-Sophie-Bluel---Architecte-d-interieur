@@ -186,3 +186,26 @@ footer nav ul {
 	margin: 2em
 }
 
+/* -- CSS Ajout Filtres -- */
+
+.filter-group {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.filter-button {
+	font-family: 'Syne';
+	font-weight: 700;
+	background-color: transparent;
+	border: 1px solid #1D6154;
+	padding: 10px 20px;
+	margin: 0 5px;
+	cursor: pointer;
+	border-radius: 30px;
+	transition: background-color 0.3s, color 0.3s;
+	
+	&.active, &:hover {
+		background-color: #1D6154;
+		color: white;
+	}
+}
