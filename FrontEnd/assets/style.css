@@ -265,3 +265,27 @@ footer nav ul {
 	text-align: center;
 	margin-bottom: 15px;
 }
+
+/* -- Edition Portfolio -- */
+
+#portfolio-edit-group {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+}
+.zdit-projects-wrapper {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.edit-projects-btn {
+	background-color: transparent;
+	border: none;
+	font-weight: 400;
+	font-size: 14px;
+	cursor: pointer;
+	margin-bottom: 1em;
+	font-family: 'Work Sans';
+	height: 30px;
+}
