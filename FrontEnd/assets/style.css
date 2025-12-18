@@ -289,3 +289,99 @@ footer nav ul {
 	font-family: 'Work Sans';
 	height: 30px;
 }
+
+/* -- Modal -- */
+.modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.3);
+	z-index: 1000;
+	justify-content: center;
+	align-items: center;
+	display: flex;
+}
+
+.modal-content {
+	background-color: white;
+	padding: 20px;
+	border-radius: 10px;
+	width: 630px;
+	max-width: 90%;
+	height: 680px;
+	max-height: 80%;
+	overflow-y: auto;
+}
+
+#modal-nav {
+	margin-bottom: 20px;
+}
+
+#modal-close-btn {
+	background-color: transparent;
+	border: none;
+	font-size: 24px;
+	cursor: pointer;
+	right: 10px;
+	position: absolute;
+}
+
+#modal-undo-btn {
+	background-color: transparent;
+	border: none;
+	font-size: 24px;
+	cursor: pointer;
+	left: 10px;
+	position: absolute;
+	display: none;
+}
+
+#modal-header h3 {
+	padding-top: 30px;
+	font-weight: 400;
+	font-size: 26px;
+	text-align: center;
+}
+
+#modal-header {
+	margin-bottom: 10px;
+	position: relative;
+}
+
+#modal-body {
+	border: 2px solid red;
+	height: 75%;
+	width: 80%;
+	margin: auto;
+}
+
+#modal-footer {
+	margin-top: 20px;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	flex-direction: column;
+}
+
+#modal-footer span {
+	height: 1px;
+	width: 80%;
+	background-color: #E5E5E5;
+	margin: auto;
+}
+
+#add-project-btn {
+	background-color: #1D6154;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 30px;
+	cursor: pointer;
+	font-family: 'Syne';
+	font-weight: 700;
+	width: 50%;
+	margin: auto;
+}

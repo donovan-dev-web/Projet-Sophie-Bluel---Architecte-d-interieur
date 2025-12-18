@@ -1,4 +1,5 @@
 import { isAuthenticated, logout } from "../core/auth.js";
+import { openModal } from "./modal.js";
 
 export function initAuthInterface() {
 	handleNavbarAuth();
@@ -64,6 +65,6 @@ function handlePortfolioAuthUI() {
 
 	const editButton = editGroup.querySelector(".edit-projects-btn");
 	editButton.addEventListener("click", () => {
-		console.log("Ouverture interface admin / modale");
+		openModal();
 	});
 }
