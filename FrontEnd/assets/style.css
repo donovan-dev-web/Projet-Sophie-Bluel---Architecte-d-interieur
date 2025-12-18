@@ -256,3 +256,12 @@ footer nav ul {
 .Menu-actiive {
 	font-weight: 700;
 }
+
+/* -- Page Connection -- */
+
+#login-error {
+	display: none;
+	color: red;
+	text-align: center;
+	margin-bottom: 15px;
+}
