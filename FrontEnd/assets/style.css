@@ -58,6 +58,10 @@ header {
 	justify-content: space-between;
 	margin: 50px 0
 }
+
+header > a {
+	text-decoration: none;
+}
 section {
 	margin: 50px 0
 }
@@ -301,7 +305,7 @@ footer nav ul {
 	z-index: 1000;
 	justify-content: center;
 	align-items: center;
-	display: flex;
+	display: none;
 }
 
 .modal-content {
@@ -351,7 +355,6 @@ footer nav ul {
 }
 
 #modal-body {
-	border: 2px solid red;
 	height: 75%;
 	width: 80%;
 	margin: auto;
@@ -384,4 +387,161 @@ footer nav ul {
 	font-weight: 700;
 	width: 50%;
 	margin: auto;
+}
+
+.modal-gallery {
+	width: 100%;
+	height: 100%;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+	grid-template-rows: repeat(1fr);
+	gap: 5px;
+}
+
+.modal-card {
+	width: 75px;
+	height: 100px;
+	position: relative;
+}
+
+.modal-card img {
+	width: 100%;
+	display: block;
+}
+
+.delete-project-btn {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background: black;
+	border: none;
+	cursor: pointer;
+	padding: 4px;
+}
+
+.delete-project-btn img {
+	height: 100%;
+}
+
+.modal-addproject {
+	display: none;
+}
+
+/* -- formulaires -- */
+
+#submit-project-btn {
+	padding: 10px 30px;
+	border-radius: 60px;
+	border: none;
+	font-weight: 600;
+}
+
+#submit-project-btn.btn-disabled {
+	background: #A7A7A7;
+	color: white;
+	cursor: not-allowed;
+}
+
+#submit-project-btn.btn-active {
+	background: #1D6154;
+	color: white;
+	cursor: pointer;
+}
+
+.modal-form {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	width: 100%;
+	max-width: 420px;
+	margin: 0 auto;
+}
+
+.form-group input[type="text"],
+.form-group select {
+	height: 42px;
+	padding: 0 12px;
+	border-radius: 4px;
+	border: 1px solid #BFBFBF;
+	font-size: 14px;
+	background-color: #FFFFFF;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+
+.form-group input[type="text"]:focus,
+.form-group select:focus {
+	outline: none;
+	border-color: #1D6154;
+}
+
+.image-upload {
+	background-color: #E8F1F6;
+	border-radius: 3px;
+	padding: 30px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	cursor: pointer;
+	text-align: center;
+}
+
+.image-upload.has-image label {
+	display: none;
+}
+
+.image-upload label {
+	cursor: pointer;
+}
+
+.upload-btn {
+	background-color: #CBD6DC;
+	color: #306685;
+	padding: 8px 14px;
+	border-radius: 50px;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.upload-info {
+	font-size: 10px;
+	color: #444;
+}
+#image-preview {
+	max-width: 100%;
+	max-height: 170px;
+	object-fit: contain;
+	border-radius: 3px;
+}
+.form-group select {
+	appearance: none;
+	background-image: url("./icons/picture-svgrepo-com\ 1.png");
+	background-repeat: no-repeat;
+	background-position: right 12px center;
+	background-size: 12px;
+}
+.form-group input:invalid,
+.form-group select:invalid {
+	border-color: #D65353;
+}
+#submit-project-btn {
+	margin: 30px auto 0;
+	padding: 10px 40px;
+	border-radius: 60px;
+	border: none;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+#submit-project-btn.btn-disabled {
+	background: #A7A7A7;
+	color: white;
+	cursor: not-allowed;
+}
+
+#submit-project-btn.btn-active {
+	background: #1D6154;
+	color: white;
+	cursor: pointer;
 }
