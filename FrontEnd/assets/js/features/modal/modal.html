@@ -1,0 +1,51 @@
+<div class="modal" id="modal-wrapper">
+    <div class="modal-content">
+        <div id="modal-header">
+            <div id="modal-nav">
+                <button id="modal-undo-btn" style="display:none" type="button">
+                    <img src="./assets/icons/arrow-left.png" alt="retour">
+                </button>
+                <button id="modal-close-btn" type="button">
+                    <img src="./assets/icons/x-cross.png" alt="fermer">
+                </button>
+            </div>
+            <h3 id="modal-title">Galerie photo</h3>
+        </div>
+
+        <div id="modal-body">
+            <div class="modal-gallery" id="modal-gallery"></div>
+            <div class="modal-form" id="modal-form">
+                <form id="add-project-form" method="POST" novalidate>
+                    <div class="form-group image-upload">
+                        <img id="image-preview" alt="Aperçu de l'image" style="display:none">
+                        <label for="image" class="image-upload-label">
+                            <img src="./assets/icons/picture-svgrepo-com 1.png">
+                            <span class="upload-btn-text">+ Ajouter photo</span>
+                            <p class="upload-info">jpg, png : 4Mo max</p>
+                        </label>
+                        <input type="file" id="image" name="image" accept="image/png, image/jpeg" required hidden>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Titre</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Catégorie</label>
+                        <select id="category" name="category" required></select>
+                    </div>
+                    <div class="form-group validate">
+                        <span class="modal-separator"></span>
+                        <button type="submit" class="modal-form-btn-submit" id="validateformBtn">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="modal-footer">
+            <span class="separator"></span>
+            <button id="modal-ViewFormBtn" type="button">Ajouter une photo</button>
+        </div>
+    </div>
+</div>

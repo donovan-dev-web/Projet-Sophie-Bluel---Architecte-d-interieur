@@ -1,228 +1,182 @@
 /**
- * @file Gère le formulaire "Ajouter un projet" à l'intérieur de la modale.
- * Ceci inclut la création dynamique du formulaire, la gestion des aperçus d'images, la validation
- * côté client, et la soumission du formulaire pour ajouter de nouveaux projets.
+ * Gestion du formulaire dans la modale
  */
 
-import { addProject } from "../../services/projects.service.js";
-import { renderModalGallery } from "./modal.gallery.js";
-import { refreshGallery } from "../gallery.js";
-import { setModalView } from "./modal.state.js";
+import { addProject } from "../../services/projects.service.js"
+import { refreshGallery } from "../gallery.js"
+
+const form = document.getElementById("add-project-form");
+const categorySelect = document.getElementById("category");
+const validateFormBtn = document.getElementById("validateformBtn");
+const imageInput = document.getElementById("image");
+const imagePreview = document.getElementById("image-preview");
+const imageLabel = document.querySelector(".image-upload-label");
 
 /**
- * Récupère les catégories de projets depuis l'API.
- * C'est un prérequis pour construire la liste déroulante des catégories du formulaire.
- * @returns {Promise<Array<Object>>} Une promesse se résolvant avec le tableau des catégories.
- * @throws {Error} Si l'opération de récupération échoue.
+ * Initialise le formulaire (appelé au state "form")
  */
-async function fetchCategories() {
-    // Note : Idéalement, cet appel API devrait également se trouver dans un service dédié, ex. `categories.service.js`.
-	const response = await fetch("http://localhost:5678/api/categories");
-	if (!response.ok) {
-		throw new Error(`Échec de la récupération des catégories. Statut : ${response.status}`);
-	}
-	return await response.json();
+export async function initModalForm() {
+    await loadCategories();
+    setupFormValidation();
+    resetModalForm();  // formulaire vide par défaut
 }
 
 /**
- * Valide un fichier image en fonction des contraintes de type et de taille.
- *
- * @param {File} file Le fichier à valider.
- * @returns {boolean} `true` si le fichier est valide, `false` sinon.
+ * Charge les catégories depuis l'API et met à jour le select
  */
-function validateImageFile(file) {
-	const ALLOWED_TYPES = ["image/jpeg", "image/png"];
-	const MAX_SIZE_BYTES = 4 * 1024 * 1024; // 4MB
+async function loadCategories() {
+    try {
+        const response = await fetch("http://localhost:5678/api/categories");
+        if (!response.ok) throw new Error(`Erreur API ! Statut : ${response.status}`);
 
-	if (!ALLOWED_TYPES.includes(file.type)) {
-		alert("Format invalide. Veuillez sélectionner un fichier JPG ou PNG.");
-		return false;
-	}
+        const categories = await response.json();
 
-	if (file.size > MAX_SIZE_BYTES) {
-		alert("L'image est trop volumineuse. La taille ne doit pas dépasser 4Mo.");
-		return false;
-	}
+        // Vider le select et ajouter une option vide par défaut
+        categorySelect.innerHTML = `<option value="">-- Choisir une catégorie --</option>`;
 
-	return true;
+        categories.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat.id;
+            option.textContent = cat.name;
+            categorySelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Erreur lors du chargement des catégories :", error);
+        categorySelect.innerHTML = `<option value="">Erreur chargement</option>`;
+    }
 }
 
 /**
- * Gère la sélection d'un fichier image par l'utilisateur. Il valide le fichier et affiche un aperçu.
- *
- * @param {HTMLInputElement} imageInput L'élément d'entrée de type fichier.
- * @param {HTMLImageElement} previewElement L'élément img pour l'aperçu.
- * @param {HTMLElement} uploadContainer Le conteneur pour l'interface de téléchargement.
+ * Configure la validation dynamique du formulaire
  */
-function handleImagePreview(imageInput, previewElement, uploadContainer) {
-    const file = imageInput.files?.[0];
+function setupFormValidation() {
+    // Vérification live sur tous les champs
+    form.addEventListener("input", updateSubmitButton);
+    categorySelect.addEventListener("change", updateSubmitButton);
+    imageInput.addEventListener("change", () => {
+        handleImageChange();
+        updateSubmitButton();
+    });
+
+    // Vérification initiale
+    updateSubmitButton();
+}
+
+/**
+ * Fonction centralisée de validation d'image
+ */
+function isImageValid(file) {
+    if (!file) return false;
+    const validTypes = ["image/jpeg", "image/png"];
+    const maxSize = 4 * 1024 * 1024; // 4Mo
+    return validTypes.includes(file.type) && file.size <= maxSize;
+}
+
+/**
+ * Met à jour le bouton de validation selon la validité du formulaire
+ */
+function updateSubmitButton() {
+    const isTitleValid = form.title.value.trim() !== "";
+    const isCategoryValid = categorySelect.value !== "";
+    const imageFile = imageInput.files[0];
+    const isImageValidFlag = isImageValid(imageFile);
+
+    const formIsValid = isTitleValid && isCategoryValid && isImageValidFlag;
+
+    validateFormBtn.disabled = !formIsValid;
+    validateFormBtn.classList.toggle("active", formIsValid);
+    validateFormBtn.classList.toggle("inactive", !formIsValid);
+}
+
+/**
+ * Gère la sélection de l'image et la prévisualisation
+ */
+function handleImageChange() {
+    const file = imageInput.files[0];
 
     if (!file) {
-        previewElement.src = "";
-        previewElement.style.display = "none";
-        uploadContainer.classList.remove("has-image");
+        imagePreview.style.display = "none";
+        imagePreview.src = "";
+        imageLabel.style.display = "flex";
         return;
     }
 
-    if (validateImageFile(file)) {
-        const objectUrl = URL.createObjectURL(file);
-        previewElement.src = objectUrl;
-        previewElement.style.display = "block";
-        // Révoquer l'URL après le chargement pour libérer la mémoire
-        previewElement.onload = () => URL.revokeObjectURL(objectUrl);
-        uploadContainer.classList.add("has-image");
-    } else {
-        // Si la validation échoue, réinitialiser l'entrée pour permettre à l'utilisateur de sélectionner un nouveau fichier.
-        imageInput.value = ""; 
-        previewElement.src = "";
-        previewElement.style.display = "none";
-        uploadContainer.classList.remove("has-image");
-    }
-}
-
-/**
- * Vérifie si tous les champs requis du formulaire sont remplis et active/désactive le bouton de soumission en conséquence.
- *
- * @param {HTMLFormElement} form L'élément de formulaire.
- * @param {HTMLButtonElement} submitButton Le bouton de soumission du formulaire.
- */
-function checkFormCompleteness(form, submitButton) {
-    const isComplete = form.checkValidity();
-    if (submitButton) {
-        submitButton.disabled = !isComplete;
-        submitButton.classList.toggle("btn-active", isComplete);
-        submitButton.classList.toggle("btn-disabled", !isComplete);
-    }
-}
-
-/**
- * Gère la logique de soumission du formulaire. Il construit un FormData, appelle le service API,
- * et met à jour l'interface utilisateur en cas de succès ou affiche une erreur en cas d'échec.
- *
- * @param {Event} event L'événement de soumission du formulaire.
- */
-async function handleFormSubmission(event) {
-    event.preventDefault();
-    const form = event.target;
-    const submitButton = document.getElementById("submit-project-btn");
-
-    if (!form.checkValidity()) {
-        alert("Veuillez remplir tous les champs requis.");
+    if (!isImageValid(file)) {
+        alert("Format invalide ou fichier trop volumineux (max 4Mo, JPG/PNG).");
+        imageInput.value = "";
+        imagePreview.style.display = "none";
+        imagePreview.src = "";
+        imageLabel.style.display = "flex";
         return;
     }
 
-    // Créer un FormData pour envoyer le fichier et les données textuelles ensemble.
-    const formData = new FormData();
-    formData.append("image", form.image.files[0]);
-    formData.append("title", form.title.value.trim());
-    formData.append("category", form.category.value);
-
-    try {
-        submitButton.disabled = true; // Empêcher les soumissions multiples
-        
-        await addProject(formData);
-
-        // En cas de succès, rafraîchir les données et ramener la modale à la vue galerie.
-        await renderModalGallery();
-        await refreshGallery();
-        // Retourner explicitement à la vue galerie (éviter l'appel sans argument qui provoquait un état inattendu).
-        setModalView('gallery');
-
-    } catch (error) {
-        console.error("Erreur lors de l'ajout du projet :", error);
-        alert("Une erreur est survenue lors de l'ajout du projet. Veuillez réessayer.");
-    } finally {
-        // Réactiver le bouton quel que soit le succès ou l'échec.
-        submitButton.disabled = false;
-    }
+    // Prévisualisation valide
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = "block";
+        imageLabel.style.display = "none"; // masquer le label
+    };
+    reader.readAsDataURL(file);
 }
 
 /**
- * Met en place l'ensemble de la vue du formulaire "Ajouter un projet". Il récupère les catégories, injecte le HTML du formulaire,
- * et attache tous les écouteurs d'événements nécessaires en utilisant la délégation d'événements lorsque c'est possible.
- *
- * @param {HTMLElement} formContainer L'élément du DOM qui contiendra le formulaire.
+ * Réinitialise complètement le formulaire
  */
-export async function setupModalForm(formContainer) {
-    if (!formContainer) return;
+export function resetModalForm() {
+    form.reset(); // vide title et category
 
-    try {
-        const categories = await fetchCategories();
-        formContainer.innerHTML = createFormHTML(categories);
+    // Réinitialiser la preview
+    imagePreview.src = "";
+    imagePreview.style.display = "none";
 
-        const form = document.getElementById("add-project-form");
-        const submitButton = document.getElementById("submit-project-btn");
+    // Réafficher le label d'upload
+    imageLabel.style.display = "flex";
 
-        // --- Écouteurs d'événements ---
+    // Désactiver le bouton
+    validateFormBtn.disabled = true;
+    validateFormBtn.classList.remove("active");
+    validateFormBtn.classList.add("inactive");
+}
 
-        // Utiliser un seul écouteur sur le formulaire pour gérer les changements et les entrées qui remontent.
-        form.addEventListener('input', () => checkFormCompleteness(form, submitButton));
 
-        // Écouteur spécifique pour l'entrée de fichier.
-        const imageInput = document.getElementById("image");
-        const previewElement = document.getElementById("image-preview");
-        const uploadContainer = form.querySelector(".image-upload");
-        imageInput.addEventListener('change', () => handleImagePreview(imageInput, previewElement, uploadContainer));
-        
-        // Écouteur pour la soumission du formulaire.
-        form.addEventListener('submit', handleFormSubmission);
+/**
+ * Gère l'envoi du formulaire
+ * @param {Function} setModalState - fonction pour changer le state de la modal ("gallery" ou "form")
+ */
+let formSubmissionInitialized = false;
 
-        // Si le bouton Valider se trouve dans le footer (en dehors du formulaire), le relier:
-        if (submitButton) {
-            submitButton.addEventListener('click', () => {
-                // requestSubmit respecte la validation HTML et déclenche l'événement 'submit'
-                if (typeof form.requestSubmit === 'function') {
-                    form.requestSubmit();
-                } else {
-                    // Fallback: déclencher le bouton submit interne pour que l'événement 'submit' soit émis
-                    const internal = document.getElementById('internal-submit');
-                    if (internal) internal.click();
-                }
-            });
+export function setupFormSubmission(setModalState) {
+    if (formSubmissionInitialized) return; // verifie si initialisé
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (validateFormBtn.disabled) {
+            console.warn("Le formulaire n'est pas valide !");
+            return;
         }
-        
-        // Vérification initiale pour définir correctement l'état du bouton au chargement du formulaire.
-        checkFormCompleteness(form, submitButton);
 
-    } catch (error) {
-        console.error("Erreur lors de l'initialisation du formulaire de la modale :", error);
-        formContainer.innerHTML = "<p class='error-message'>Impossible de charger le formulaire. Veuillez réessayer.</p>";
-    }
-}
+        const data = new FormData();
+        data.append("title", form.title.value.trim());
+        data.append("category", categorySelect.value);
+        data.append("image", imageInput.files[0]);
 
-/**
- * Génère la chaîne de caractères HTML pour le formulaire d'ajout de projet.
- * @param {Array<Object>} categories - Tableau d'objets de catégories pour la liste déroulante.
- * @returns {string} La chaîne de caractères HTML du formulaire.
- */
-function createFormHTML(categories) {
-	return `
-		<form id="add-project-form" class="modal-form" novalidate>
+        try {
+            const result = await addProject(data);
+            console.log("Projet ajouté avec succès :", result);
 
-			<div class="form-group image-upload">
-                <img id="image-preview" alt="Aperçu de l'image" style="display:none">
-                <label for="image" class="image-upload-label">
-                    <span class="upload-icon">+</span>
-                    <span class="upload-btn-text">Ajouter une photo</span>
-                    <p class="upload-info">jpg, png : 4Mo max</p>
-                </label>
-				<input type="file" id="image" name="image" accept="image/png, image/jpeg" required hidden>
-			</div>
+            // Reset formulaire et retourner à la gallery
+            resetModalForm();
+            if (typeof setModalState === "function") {
+                setModalState("gallery");
+                await refreshGallery();
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'ajout du projet :", error);
+            alert("Impossible d'ajouter le projet. Voir console pour détails.");
+        }
+    });
 
-            <button type="submit" id="internal-submit" hidden></button>
-
-			<div class="form-group">
-				<label for="title">Titre</label>
-				<input type="text" id="title" name="title" required>
-			</div>
-
-			<div class="form-group">
-				<label for="category">Catégorie</label>
-				<select id="category" name="category" required>
-					<option value="" disabled selected>-- Choisir une catégorie --</option>
-					${categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join("\n")}
-				</select>
-			</div>
-		</form>
-	`;
+    formSubmissionInitialized = true; // marquer comme initialisé
 }

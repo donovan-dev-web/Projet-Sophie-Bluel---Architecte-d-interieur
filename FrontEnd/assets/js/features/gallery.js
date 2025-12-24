@@ -1,27 +1,18 @@
 /**
- * @file Gère la galerie principale des projets, y compris la récupération, l'affichage et le filtrage des projets.
+ * Gère la galerie principale des projets, y compris la récupération, l'affichage et le filtrage des projets.
  */
 
 import { getProjects } from "../services/projects.service.js";
 
 /**
  * Un cache local pour stocker la liste de tous les projets récupérés depuis l'API.
- * Cela évite de faire des appels API redondants lorsqu'un utilisateur filtre simplement les projets.
  * Le cache est mis à jour en appelant `refreshGallery()`.
- * @type {Array<Object>}
  */
 let allProjectsCache = [];
 
 
 // --- Rendu de la galerie ---
 
-/**
- * Affiche une liste de projets dans l'élément principal de la galerie.
- * Il efface tout contenu existant dans la galerie avant d'ajouter les nouveaux éléments.
- *
- * @param {Array<Object>} projectsToRender - Un tableau d'objets projet à afficher.
- * @param {HTMLElement} galleryElement - L'élément du DOM où les projets seront affichés.
- */
 function renderProjects(projectsToRender, galleryElement) {
 	if (!galleryElement) return;
 
@@ -35,6 +26,7 @@ function renderProjects(projectsToRender, galleryElement) {
 	for (const project of projectsToRender) {
 		const figure = document.createElement("figure");
 		figure.dataset.id = project.id;
+		figure.classList.add("gallery-items-figure");
 
 		const img = document.createElement("img");
 		img.src = project.imageUrl;
@@ -57,10 +49,6 @@ function renderProjects(projectsToRender, galleryElement) {
 
 /**
  * Gère la logique de filtrage des projets lorsqu'un bouton de filtre est cliqué.
- *
- * @param {Event} event - L'événement de clic provenant du groupe de filtres.
- * @param {HTMLElement} galleryElement - L'élément du DOM de la galerie à mettre à jour.
- * @param {HTMLElement} filterGroupElement - L'élément du DOM du groupe de filtres.
  */
 function handleFilterClick(event, galleryElement, filterGroupElement) {
     // Utiliser la délégation d'événements pour n'agir que si la cible est un bouton de filtre.
@@ -87,11 +75,8 @@ function handleFilterClick(event, galleryElement, filterGroupElement) {
 
 /**
  * Récupère les catégories de projets depuis l'API et crée les boutons de filtre.
- *
- * @param {HTMLElement} filterGroupElement - L'élément du DOM auquel les boutons seront ajoutés.
  */
 async function fetchAndCreateFilterButtons(filterGroupElement) {
-	// --- Vérification d'idempotence ---
 	// Si les boutons de filtre (plus que le bouton "Tous" par défaut) existent déjà, ne rien faire.
 	if (!filterGroupElement || filterGroupElement.childElementCount > 1) {
 		return;
