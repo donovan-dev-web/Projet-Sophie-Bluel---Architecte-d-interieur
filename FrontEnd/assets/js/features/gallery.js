@@ -83,8 +83,6 @@ async function fetchAndCreateFilterButtons(filterGroupElement) {
 	}
 
 	try {
-        // Note : Pour une application plus grande, cet appel API serait mieux placé
-        // dans `services/projects.service.js` pour centraliser toutes les interactions API.
 		const response = await fetch("http://localhost:5678/api/categories");
 		if (!response.ok) {
 			throw new Error(`Erreur API ! Statut : ${response.status}`);

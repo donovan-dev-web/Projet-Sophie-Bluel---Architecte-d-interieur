@@ -142,12 +142,12 @@ export function resetModalForm() {
 
 /**
  * Gère l'envoi du formulaire
- * @param {Function} setModalState - fonction pour changer le state de la modal ("gallery" ou "form")
  */
+
 let formSubmissionInitialized = false;
 
 export function setupFormSubmission(setModalState) {
-    if (formSubmissionInitialized) return; // verifie si initialisé
+    if (formSubmissionInitialized) return;
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
