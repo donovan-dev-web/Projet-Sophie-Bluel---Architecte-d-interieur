@@ -1,5 +1,5 @@
 /**
- * @file Gère la fonctionnalité de connexion de l'utilisateur sur la page de connexion.
+ * Gère la fonctionnalité de connexion de l'utilisateur sur la page de connexion.
  * Il gère la soumission du formulaire, la communication avec l'API pour l'authentification et les retours à l'utilisateur.
  */
 

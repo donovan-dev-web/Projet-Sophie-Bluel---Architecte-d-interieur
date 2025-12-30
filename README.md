@@ -41,6 +41,8 @@ js/
 │   ├─ gallery.js
 │   ├─ auth-interface.js
 │   └─ modal/
+│       ├─ modal.html
+│       ├─ modal.css
 │       ├─ modal.js
 │       ├─ modal.gallery.js
 │       ├─ modal.form.js
