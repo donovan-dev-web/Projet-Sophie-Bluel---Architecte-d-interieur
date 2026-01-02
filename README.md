@@ -20,21 +20,23 @@ Votre mission principale :
 
 ##  Fonctionnalités développées
 
-✔ Récupération & affichage des projets via API  
-✔ Filtres de catégories dynamiques et fonctionnels  
-✔ Connexion administrateur + token localStorage  
-✔ Mode édition : suppression + ajout de projets  
-✔ Gestion des erreurs formulaires et retours API
+✔ Récupération & affichage dynamique des projets via API
+✔ Filtres de catégories dynamiques
+✔ Connexion administrateur avec authentification par token
+✔ Mode édition (admin) : ajout et suppression de projets
+✔ Modale interactive avec gestion d’état (gallery / form)
+✔ Validation des formulaires et gestion des erreurs
+✔ Centralisation de la configuration technique du projet
 
 ---
 
 ## Structure du projet
 
 ```
-
 js/
 ├─ core/
-│   └─ auth.js
+│   ├─ auth.js
+│   └─ config.js
 ├─ services/
 │   └─ projects.service.js
 ├─ features/
@@ -51,6 +53,26 @@ js/
 │   └─ login.js
 
 ````
+
+## Configuration globale (`config.js`)
+
+Un fichier de configuration centralise tous les paramètres techniques du projet afin d’éviter les valeurs en dur dispersées dans le code.
+
+### Paramètres centralisés :
+
+* URL de base de l’API
+* Routes d’API
+* Clés utilisées dans le `localStorage`
+* Règles de validation des images (formats, taille maximale)
+
+### Exemple :
+
+```js
+export const IMAGE_CONFIG = {
+  MAX_SIZE: 4 * 1024 * 1024,
+  ALLOWED_TYPES: ["image/jpeg", "image/png"],
+};
+```
 
 ---
 
@@ -72,16 +94,24 @@ js/
 
 ---
 
-##  Authentification
+## Authentification
 
-- Stockage du token :
+L’authentification repose sur un **token JWT** retourné par l’API lors de la connexion administrateur.
+
+### Stockage du token
+
+Les clés utilisées sont centralisées dans le fichier de configuration :
+
 ```js
-localStorage.setItem("token", token);
-````
+STORAGE_KEYS.TOKEN
+STORAGE_KEYS.USER_ID
+```
 
-* Contrôle d’accès activant l’UI édition (boutons / modale)
+Exemple d’utilisation :
 
----
+```js
+localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+```
 
 ##  Schéma des échanges avec l’API
 
