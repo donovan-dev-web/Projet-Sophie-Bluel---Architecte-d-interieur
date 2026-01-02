@@ -4,6 +4,7 @@
 
 import { addProject } from "../../services/projects.service.js"
 import { refreshGallery } from "../gallery.js"
+import { IMAGE_CONFIG } from "../../core/config.js";
 
 const form = document.getElementById("add-project-form");
 const categorySelect = document.getElementById("category");
@@ -49,27 +50,34 @@ async function loadCategories() {
 /**
  * Configure la validation dynamique du formulaire
  */
-function setupFormValidation() {
-    // Vérification live sur tous les champs
-    form.addEventListener("input", updateSubmitButton);
-    categorySelect.addEventListener("change", updateSubmitButton);
-    imageInput.addEventListener("change", () => {
-        handleImageChange();
-        updateSubmitButton();
-    });
 
-    // Vérification initiale
-    updateSubmitButton();
+let formValidationInitialized = false;
+
+function setupFormValidation() {
+	if (formValidationInitialized) return;
+
+	form.addEventListener("input", updateSubmitButton);
+	categorySelect.addEventListener("change", updateSubmitButton);
+	imageInput.addEventListener("change", () => {
+		handleImageChange();
+		updateSubmitButton();
+	});
+
+	updateSubmitButton();
+	formValidationInitialized = true;
 }
 
 /**
  * Fonction centralisée de validation d'image
+ * Utilise les paramètres définis dans core/config.js
  */
 function isImageValid(file) {
     if (!file) return false;
-    const validTypes = ["image/jpeg", "image/png"];
-    const maxSize = 4 * 1024 * 1024; // 4Mo
-    return validTypes.includes(file.type) && file.size <= maxSize;
+
+    const isValidType = IMAGE_CONFIG.ALLOWED_TYPES.includes(file.type);
+    const isValidSize = file.size <= IMAGE_CONFIG.MAX_SIZE;
+
+    return isValidType && isValidSize;
 }
 
 /**
@@ -138,7 +146,6 @@ export function resetModalForm() {
     validateFormBtn.classList.remove("active");
     validateFormBtn.classList.add("inactive");
 }
-
 
 /**
  * Gère l'envoi du formulaire

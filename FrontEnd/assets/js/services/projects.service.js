@@ -5,13 +5,8 @@
  */
 
 import { getAuthToken } from "../core/auth.js";
+import { API_BASE_URL, API_ROUTES } from "../core/config.js";
 
-/**
- * L'URL de base de l'API. L'utilisation d'une constante facilite la mise à jour si l'adresse
- * de l'API change.
- * @type {string}
- */
-const API_URL = "http://localhost:5678/api";
 
 // --- Fonctions du Service ---
 
@@ -23,7 +18,7 @@ const API_URL = "http://localhost:5678/api";
  * @throws {Error} Lance une erreur si la requête réseau échoue ou si l'API retourne un statut non-ok.
  */
 export async function getProjects() {
-	const response = await fetch(`${API_URL}/works`);
+	const response = await fetch(`${API_BASE_URL}${API_ROUTES.PROJECTS}`);
 
 	if (!response.ok) {
         // Construire un message d'erreur plus informatif.
@@ -48,7 +43,7 @@ export async function addProject(formData) {
         throw new Error("Token d'authentification non trouvé. Impossible d'ajouter le projet.");
     }
 
-	const response = await fetch(`${API_URL}/works`, {
+	const response = await fetch(`${API_BASE_URL}${API_ROUTES.PROJECTS}`, {
 		method: "POST",
 		headers: {
             // Note : 'Content-Type' n'est PAS défini ici. Lors de l'utilisation de FormData avec fetch,
@@ -82,7 +77,7 @@ export async function deleteProject(projectId) {
         throw new Error("Token d'authentification non trouvé. Impossible de supprimer le projet.");
     }
 
-	const response = await fetch(`${API_URL}/works/${projectId}`, {
+	const response = await fetch(`${API_BASE_URL}${API_ROUTES.PROJECTS}/${projectId}`, {
 		method: "DELETE",
 		headers: {
 			"Authorization": `Bearer ${token}`,

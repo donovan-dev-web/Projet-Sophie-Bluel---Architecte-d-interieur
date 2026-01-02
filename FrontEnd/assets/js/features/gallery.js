@@ -3,6 +3,7 @@
  */
 
 import { getProjects } from "../services/projects.service.js";
+import { API_BASE_URL, API_ROUTES } from "../core/config.js";
 
 /**
  * Un cache local pour stocker la liste de tous les projets récupérés depuis l'API.
@@ -83,7 +84,7 @@ async function fetchAndCreateFilterButtons(filterGroupElement) {
 	}
 
 	try {
-		const response = await fetch("http://localhost:5678/api/categories");
+		const response = await fetch(`${API_BASE_URL}${API_ROUTES.CATEGORIES}`);
 		if (!response.ok) {
 			throw new Error(`Erreur API ! Statut : ${response.status}`);
 		}

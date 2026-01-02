@@ -4,18 +4,7 @@
  * de rester connecté entre les chargements de page.
  */
 
-// --- Constantes ---
-
-/**
- * La clé utilisée pour stocker le token d'authentification dans le localStorage.
- */
-const TOKEN_KEY = "token";
-
-/**
- * La clé utilisée pour stocker l'ID de l'utilisateur dans le localStorage.
- */
-const USER_ID_KEY = "userId";
-
+import { STORAGE_KEYS } from "./config.js";
 
 // --- API Publique ---
 
@@ -23,7 +12,7 @@ const USER_ID_KEY = "userId";
  * vérifie la présence du token d'authentification.
  */
 export function isUserAuthenticated() {
-	return Boolean(localStorage.getItem(TOKEN_KEY));
+	return Boolean(localStorage.getItem(STORAGE_KEYS.TOKEN));
 }
 
 /**
@@ -34,21 +23,21 @@ export function saveAuthCredentials(token, userId) {
 		console.error("Erreur d'authentification : le token ou l'ID utilisateur est manquant.");
 		return;
 	}
-	localStorage.setItem(TOKEN_KEY, token);
-	localStorage.setItem(USER_ID_KEY, userId);
+	localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+	localStorage.setItem(STORAGE_KEYS.USER_ID, userId);
 }
 
 /**
  * Efface le token d'authentification et l'ID de l'utilisateur du localStorage pour déconnecter l'utilisateur.
  */
 export function clearAuthCredentials() {
-	localStorage.removeItem(TOKEN_KEY);
-	localStorage.removeItem(USER_ID_KEY);
+	localStorage.removeItem(STORAGE_KEYS.TOKEN);
+	localStorage.removeItem(STORAGE_KEYS.USER_ID);
 }
 
 /**
  * Récupère le token d'authentification depuis le localStorage.
  */
 export function getAuthToken() {
-	return localStorage.getItem(TOKEN_KEY);
+	return localStorage.getItem(STORAGE_KEYS.TOKEN);
 }

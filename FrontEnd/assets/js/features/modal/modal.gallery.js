@@ -13,6 +13,7 @@ const galleryContainer = document.getElementById("modal-gallery");
  */
 export async function initModalGallery() {
 	if (!galleryContainer) return;
+	bindDeleteEvents();
 	await refreshModalGallery();
 }
 
@@ -67,20 +68,24 @@ function renderGallery(projects) {
 
 		galleryContainer.appendChild(figure);
 	});
-
-	bindDeleteEvents();
 }
 
 /**
  * Ajout des events de suppression (event delegation)
  */
+
+let deleteEventsInitialized = false;
+
 function bindDeleteEvents() {
+	if (deleteEventsInitialized) return;
+
 	galleryContainer.addEventListener("click", (event) => {
-        event.preventDefault();
 		const deleteBtn = event.target.closest(".modal-delete-btn");
 		if (!deleteBtn) return;
 
 		const projectId = deleteBtn.dataset.id;
 		deleteProjectFromModal(projectId);
 	});
+
+	deleteEventsInitialized = true;
 }

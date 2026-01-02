@@ -4,6 +4,7 @@
  */
 
 import { saveAuthCredentials } from "../core/auth.js";
+import { API_BASE_URL, API_ROUTES, STORAGE_KEYS } from "../core/config.js";
 
 /**
  * Affiche un message d'erreur spécifique à l'utilisateur ou masque l'affichage de l'erreur.
@@ -42,9 +43,7 @@ async function handleLoginAttempt(event, emailInput, passwordInput, errorElement
 	const password = passwordInput.value;
 
 	try {
-        // Note : Pour une application plus grande, cette logique de fetch serait idéalement placée
-        // dans un fichier de service dédié (par exemple, `services/auth.service.js`).
-		const response = await fetch("http://localhost:5678/api/users/login", {
+		const response = await fetch(`${API_BASE_URL}${API_ROUTES.LOGIN}`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ email, password }),

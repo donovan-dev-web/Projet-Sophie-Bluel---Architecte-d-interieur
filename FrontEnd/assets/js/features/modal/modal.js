@@ -24,9 +24,10 @@ const modalCloseBtn = document.getElementById("modal-close-btn");
  * Ajout d'evenement sur les boutons
  */
 
+/* // Fonction de debug pour ecouter l'ensemble des evenement submit
 document.addEventListener("submit", e => {
 	console.error("FORM SUBMIT NON BLOQUÉ", e.target);
-});
+});*/
 
 
 modalViewFormBtn.addEventListener("click", (event) => {
